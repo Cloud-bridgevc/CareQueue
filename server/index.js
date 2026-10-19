@@ -9,12 +9,19 @@ import { fileURLToPath } from 'node:url';
 import { createStore, sweep } from './store.js';
 import { match, authorize } from './api.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+// import.meta.url is undefined in the Workers bundle; static files are served by the assets binding there.
+const ROOT = import.meta.url ? join(dirname(fileURLToPath(import.meta.url)), '..') : '/';
 const PORT = Number(process.env.PORT) || 4310;
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const SWEEP_INTERVAL_MS = 60 * 1000;
 
-const store = createStore();
+// Created on first use: Workers forbids random values (used by the seed and audit log) at global scope.
+let realStore;
+const getStore = () => (realStore ??= createStore());
+const store = new Proxy({}, {
+  get: (_, key) => Reflect.get(getStore(), key),
+  set: (_, key, value) => Reflect.set(getStore(), key, value),
+});
 
 const STATIC = [
   ['/shared/', join(ROOT, 'shared')],
@@ -108,7 +115,7 @@ async function handleApi(req, res, url) {
 
   const body = method === 'GET' ? {} : await readBody(req);
   const ctx = {
-    s: store, user, params: r.params, query: url.searchParams, body, now: Date.now(),
+    s: getStore(), user, params: r.params, query: url.searchParams, body, now: Date.now(),
     audit: (action, entity, entityId, detail) => store.audit.append({ actor: user, action, entity, entityId, detail }),
   };
   const data = await r.handler(ctx);
@@ -138,7 +145,12 @@ async function serveStatic(req, res, url) {
   return send(res, 404, page404, { 'Content-Type': 'text/html; charset=utf-8' });
 }
 
+// On Cloudflare Workers, timers can't run at global scope, so sweep lazily on requests instead.
+const ON_WORKERS = globalThis.navigator?.userAgent === 'Cloudflare-Workers';
+let lastSweep = Date.now();
+
 const server = http.createServer(async (req, res) => {
+  if (ON_WORKERS && Date.now() - lastSweep > SWEEP_INTERVAL_MS) { lastSweep = Date.now(); sweep(getStore(), lastSweep); }
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   try {
     if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
@@ -152,7 +164,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 // Background monitor (the Lambda sweep in AWS).
-setInterval(() => sweep(store, Date.now()), SWEEP_INTERVAL_MS).unref();
+if (!ON_WORKERS) setInterval(() => sweep(getStore(), Date.now()), SWEEP_INTERVAL_MS).unref();
 
 server.listen(PORT, () => {
   console.log(`CareQueue running — website http://localhost:${PORT}/  ·  dashboard http://localhost:${PORT}/app/`);
