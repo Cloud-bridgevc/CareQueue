@@ -1,0 +1,15 @@
+{
+  "name": "carequeue",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CareQueue — home-care scheduling and coordination platform (demo build, synthetic data only)",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing — CareQueue</title>
+<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div data-site-header></div>
+<main>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Pricing</div>
+      <h1>Priced per active caregiver, billed monthly</h1>
+      <p>Office staff seats are unlimited on every plan. An active caregiver is anyone assigned at least one visit in the billing month.</p>
+    </div>
+    <div class="pricing">
+      <div class="card plan">
+        <h3>Essentials</h3>
+        <div class="price">$6<small> / active caregiver / mo</small></div>
+        <p class="muted small">For single-branch agencies getting off spreadsheets.</p>
+        <ul>
+          <li>Care team directory and availability</li>
+          <li>Visit scheduling and coverage board</li>
+          <li>Conflict detection and confirmation monitoring</li>
+          <li>Supervisor attention queue</li>
+          <li>Audit log (1-year retention)</li>
+        </ul>
+        <a class="btn" href="/request-demo?plan=essentials">Talk to us</a>
+      </div>
+      <div class="card plan featured">
+        <span class="pill teal" style="align-self:flex-start;margin-bottom:8px">Most chosen</span>
+        <h3>Professional</h3>
+        <div class="price">$11<small> / active caregiver / mo</small></div>
+        <p class="muted small">For growing agencies coordinating across shifts and branches.</p>
+        <ul>
+          <li>Everything in Essentials</li>
+          <li>AI-drafted handover summaries with supervisor review</li>
+          <li>Incident escalation workflow</li>
+          <li>Operations reporting and recurring-issue analysis</li>
+          <li>Configurable rules and retention</li>
+          <li>SSO (SAML / OIDC)</li>
+        </ul>
+        <a class="btn btn-primary" href="/request-demo?plan=professional">Request a demo</a>
+      </div>
+      <div class="card plan">
+        <h3>Enterprise</h3>
+        <div class="price">Custom</div>
+        <p class="muted small">For multi-state operators and agencies with strict compliance needs.</p>
+        <ul>
+          <li>Everything in Professional</li>
+          <li>Business Associate Agreement</li>
+          <li>Dedicated AWS region and customer-managed keys</li>
+          <li>Audit log export with immutable storage</li>
+          <li>EVV aggregator and payroll integrations</li>
+          <li>Named onboarding lead</li>
+        </ul>
+        <a class="btn" href="/request-demo?plan=enterprise">Contact sales</a>
+      </div>
+    </div>
+    <p class="small muted" style="margin-top:16px">Illustrative pricing for this demonstration site. Annual agreements and nonprofit discounts available.</p>
+  </div>
+</section>
+<section class="band alt">
+  <div class="wrap faq" style="max-width:820px">
+    <h2>Questions</h2>
+    <details><summary>Is there an onboarding fee?</summary><p>Essentials includes self-serve onboarding. Professional and Enterprise include a guided onboarding: kickoff, SSO setup, data import, staff training and a 30-day adoption review.</p></details>
+    <details><summary>Do AI summaries cost extra?</summary><p>No. Summary drafting is included on Professional and Enterprise. Drafts are always labelled and reviewed by your staff before they are shared.</p></details>
+    <details><summary>Can we import our existing schedules?</summary><p>Yes — CSV import for caregivers, clients and recurring visits, plus API access on Professional and above.</p></details>
+    <details><summary>Does CareQueue replace our EVV system?</summary><p>No. CareQueue reads confirmations from your EVV or telephony provider and monitors for gaps. It can also record manual office confirmations with a required reason.</p></details>
+  </div>
+</section>
+</main>
+<div data-site-footer></div>
+<script src="/site.js" type="module"></script>
+</body>
+</html>

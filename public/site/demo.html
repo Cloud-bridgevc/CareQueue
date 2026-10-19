@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scheduling demo — CareQueue</title>
+<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div data-site-header></div>
+<main>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Interactive demonstration</div>
+      <h1>Watch conflict detection work on a real-looking day</h1>
+      <p>This board runs the same rules engine as the CareQueue dashboard, entirely in your browser, on a fictional schedule. Introduce a problem and see what gets flagged — and why.</p>
+    </div>
+    <div class="controls" role="group" aria-label="Scenarios">
+      <button class="btn btn-sm" data-scenario="callout">Caregiver calls out</button>
+      <button class="btn btn-sm" data-scenario="overlap">Double-book a visit</button>
+      <button class="btn btn-sm" data-scenario="leave">Approve leave without reassigning</button>
+      <button class="btn btn-sm" data-scenario="travel">Squeeze in a cross-town visit</button>
+      <button class="btn btn-sm" data-scenario="credential">Assign without required credential</button>
+      <button class="btn btn-ghost btn-sm" data-scenario="reset">Reset</button>
+    </div>
+    <div class="demo-board">
+      <div class="card timeline"><div class="tl-grid" id="board"></div>
+        <p class="tiny muted" style="margin:12px 0 0">Click a visit to see its details. Travel times are configured zone estimates, not live routing.</p>
+      </div>
+      <aside class="card" aria-live="polite">
+        <h3 style="font-size:1rem;margin-bottom:4px">Findings <span class="pill" id="count">0</span></h3>
+        <p class="tiny muted" style="margin:0 0 8px">Each finding cites the rule and recorded data behind it.</p>
+        <div id="findings"></div>
+        <div id="detail" class="small" style="margin-top:10px"></div>
+      </aside>
+    </div>
+  </div>
+</section>
+<section class="band alt">
+  <div class="wrap grid-2">
+    <div>
+      <h2>What the rules check</h2>
+      <ul class="muted">
+        <li><strong>Overlaps</strong> — the same caregiver on two visits at once.</li>
+        <li><strong>Availability and time off</strong> — compared to recorded weekly windows and leave.</li>
+        <li><strong>Credentials</strong> — service requirements vs. the caregiver record.</li>
+        <li><strong>Coverage</strong> — unassigned visits inside your coverage horizon.</li>
+        <li><strong>Travel</strong> — gap between consecutive visits vs. zone estimate plus buffer.</li>
+        <li><strong>Weekly hours</strong> — scheduled hours vs. each caregiver's limit.</li>
+      </ul>
+    </div>
+    <div class="note-box"><strong>Explainable by design.</strong><p style="margin:.5em 0 0">Detection is deterministic: the same schedule always produces the same findings, each traceable to a configurable rule. That makes it auditable — and keeps judgment calls with your coordinators.</p></div>
+  </div>
+</section>
+</main>
+<div data-site-footer></div>
+<script src="/site.js" type="module"></script>
+<script src="/demo.js" type="module"></script>
+</body>
+</html>

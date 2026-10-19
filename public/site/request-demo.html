@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request a demo — CareQueue</title>
+<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div data-site-header></div>
+<main>
+<section class="band">
+  <div class="wrap grid-2" style="align-items:start">
+    <div>
+      <div class="eyebrow">Request a demo</div>
+      <h1>See CareQueue with scenarios like yours</h1>
+      <p class="muted">A 30-minute walkthrough with a product specialist using fictional data shaped like your agency: your zones, your shift patterns, your confirmation rules.</p>
+      <ul class="muted">
+        <li>Conflict detection and coverage suggestions</li>
+        <li>How a missed confirmation reaches a supervisor</li>
+        <li>Handover summaries and review</li>
+        <li>Security, access control and retention</li>
+      </ul>
+      <div class="note-box small" style="margin-top:24px"><strong>Please don't share client or care information.</strong> This form is for business contact details only. We'll never ask for client names, health information or visit records during sales conversations.</div>
+    </div>
+    <div class="card">
+      <div id="form-alert" role="status"></div>
+      <form id="demo-form" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="name">Full name</label><input id="name" name="name" type="text" autocomplete="name" required maxlength="80"></div>
+          <div class="field"><label for="email">Work email</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="120"></div>
+          <div class="field"><label for="agency">Agency name</label><input id="agency" name="agency" type="text" autocomplete="organization" required maxlength="120"></div>
+          <div class="field"><label for="role">Your role</label><input id="role" name="role" type="text" autocomplete="organization-title" required maxlength="80" placeholder="e.g. Operations Director"></div>
+          <div class="field"><label for="sizeBand">Agency size</label>
+            <select id="sizeBand" name="sizeBand" required>
+              <option value="">Choose…</option>
+              <option>1-25 caregivers</option><option>26-100 caregivers</option><option>101-300 caregivers</option><option>300+ caregivers</option>
+            </select></div>
+          <div class="field"><label for="state">State</label><input id="state" name="state" type="text" required maxlength="40" autocomplete="address-level1"></div>
+          <div class="field full"><label for="message">What would you like to see? <span class="muted">(optional)</span></label>
+            <textarea id="message" name="message" maxlength="1000" placeholder="e.g. how coverage works across two branches"></textarea>
+            <div class="hint">Stays in CareQueue for your demo prep; it is not copied into our marketing systems.</div></div>
+          <div class="field full" style="position:absolute;left:-9999px" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+          <div class="field full"><label style="font-weight:400;display:flex;gap:8px;align-items:flex-start"><input type="checkbox" name="consent" style="margin-top:4px"> I'd like occasional product updates by email. (Optional; you can unsubscribe at any time.)</label></div>
+        </div>
+        <button class="btn btn-primary" type="submit">Request demo</button>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<div data-site-footer></div>
+<script src="/site.js" type="module"></script>
+<script src="/request-demo.js" type="module"></script>
+</body>
+</html>

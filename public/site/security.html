@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security and privacy — CareQueue</title>
+<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div data-site-header></div>
+<main>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Security and privacy</div>
+      <h1>Minimum necessary, by default</h1>
+      <p>CareQueue is built to hold as little sensitive information as coordination requires, to show it only to the people who need it, and to record who saw what.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card feature"><h3>Access control</h3><p>Five roles — admin, scheduler, supervisor, auditor and caregiver — with server-side permission checks on every request. Caregivers see only their own visits. Care-observation notes need a separate grant and are never summarized.</p></div>
+      <div class="card feature"><h3>Data minimization</h3><p>Clients appear by ID and initials. Addresses and access codes stay in a separate secure record. Notifications say "2 items need review", never the details.</p></div>
+      <div class="card feature"><h3>Audit logging</h3><p>Every change, sign-in, denied request and sensitive view is written to an append-only, hash-chained log. Auditors can verify the chain from the dashboard.</p></div>
+      <div class="card feature"><h3>Configurable retention</h3><p>Set retention per record type — handover notes, AI drafts, resolved issues, visit records, leads. Run a dry run first; every purge is logged.</p></div>
+      <div class="card feature"><h3>Encryption</h3><p>TLS 1.2+ in transit. PostgreSQL (Amazon RDS) and Amazon S3 encrypted at rest with AWS KMS; Enterprise customers can use their own keys.</p></div>
+      <div class="card feature"><h3>Separation from sales tools</h3><p>Our CRM receives business contact and deal information only. Payloads are built from an allowlist; client, caregiver, visit and incident data are blocked.</p></div>
+    </div>
+  </div>
+</section>
+<section class="band alt">
+  <div class="wrap grid-2">
+    <div>
+      <h2>Responsible use of AI</h2>
+      <ul class="muted">
+        <li>AI is used to <strong>draft administrative summaries and report wording</strong>. Scheduling and confirmation checks are deterministic rules.</li>
+        <li>Only notes in administrative categories that the requester is authorized to read are sent. Phone numbers, emails and codes are redacted first.</li>
+        <li>The model is instructed not to diagnose, recommend treatment or assess safety. Drafts are scanned for clinical language and blocked from approval until edited.</li>
+        <li>Every draft is hidden until a <strong>different</strong> authorized supervisor approves it.</li>
+        <li>Models run in Amazon Bedrock within your AWS region. Prompts and outputs are not used to train models.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Infrastructure</h2>
+      <ul class="muted">
+        <li>Hosted on AWS: PostgreSQL on Amazon RDS, documents in Amazon S3 with Block Public Access and Object Lock for audit exports, AWS Lambda for notifications and background checks.</li>
+        <li>Private subnets, least-privilege IAM roles per function, secrets in AWS Secrets Manager.</li>
+        <li>Row-level security isolates each agency's data in the database.</li>
+        <li>Business Associate Agreement available on Enterprise.</li>
+      </ul>
+      <p class="small muted">This is a demonstration site; certifications and contractual terms are confirmed during procurement.</p>
+    </div>
+  </div>
+</section>
+</main>
+<div data-site-footer></div>
+<script src="/site.js" type="module"></script>
+</body>
+</html>

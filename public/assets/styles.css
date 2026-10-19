@@ -1,0 +1,76 @@
+/* CareQueue design tokens — calm healthcare operations palette */
+:root {
+  --navy: #13294b;
+  --navy-2: #1d3a64;
+  --navy-3: #2b4c7a;
+  --teal: #3f9a9c;
+  --teal-strong: #2c7f81;
+  --teal-soft: #e4f2f1;
+  --green: #5f9472;
+  --green-soft: #e7f1ea;
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --text: #1a2333;
+  --muted: #5a6678;
+  --border: #dde3ea;
+  --amber: #a8661a;
+  --amber-soft: #fbf1e3;
+  --red: #a94438;
+  --red-soft: #f8e9e6;
+  --blue-soft: #e8eef7;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(19, 41, 75, .06), 0 4px 16px rgba(19, 41, 75, .05);
+  --font: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: var(--font); color: var(--text); background: var(--bg); line-height: 1.5; font-size: 15px; }
+a { color: var(--teal-strong); }
+h1, h2, h3, h4 { color: var(--navy); line-height: 1.2; margin: 0 0 .5em; letter-spacing: -.01em; }
+p { margin: 0 0 1em; }
+button, input, select, textarea { font: inherit; }
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.btn { display: inline-flex; align-items: center; gap: .4em; border: 1px solid transparent; border-radius: 8px; padding: .55em 1em; cursor: pointer; font-weight: 600; text-decoration: none; font-size: .93rem; line-height: 1.2; background: var(--surface); color: var(--navy); border-color: var(--border); }
+.btn:hover { border-color: var(--navy-3); }
+.btn-primary { background: var(--navy); color: #fff; border-color: var(--navy); }
+.btn-primary:hover { background: var(--navy-2); }
+.btn-teal { background: var(--teal-strong); color: #fff; border-color: var(--teal-strong); }
+.btn-teal:hover { background: var(--teal); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--teal-strong); padding-inline: .5em; }
+.btn-sm { padding: .35em .7em; font-size: .84rem; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.muted { color: var(--muted); }
+.small { font-size: .85rem; }
+.tiny { font-size: .76rem; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; }
+
+.pill { display: inline-flex; align-items: center; gap: .3em; padding: .12em .6em; border-radius: 999px; font-size: .76rem; font-weight: 600; background: var(--blue-soft); color: var(--navy-2); white-space: nowrap; }
+.pill.teal { background: var(--teal-soft); color: var(--teal-strong); }
+.pill.green { background: var(--green-soft); color: #3c6b4d; }
+.pill.amber { background: var(--amber-soft); color: var(--amber); }
+.pill.red { background: var(--red-soft); color: var(--red); }
+.pill.gray { background: #eef0f3; color: var(--muted); }
+.sev-critical { background: var(--red-soft); color: var(--red); }
+.sev-high { background: var(--amber-soft); color: var(--amber); }
+.sev-medium { background: var(--blue-soft); color: var(--navy-2); }
+.sev-low { background: #eef0f3; color: var(--muted); }
+
+.synthetic-banner { background: var(--teal-soft); color: var(--teal-strong); font-size: .8rem; text-align: center; padding: 6px 16px; border-bottom: 1px solid #cbe5e3; }
+
+input[type=text], input[type=email], input[type=number], input[type=datetime-local], input[type=time], select, textarea {
+  width: 100%; padding: .55em .7em; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text);
+}
+textarea { min-height: 96px; resize: vertical; }
+label { display: block; font-weight: 600; font-size: .86rem; margin-bottom: .3em; color: var(--navy); }
+.field { margin-bottom: 14px; }
+.hint { font-size: .78rem; color: var(--muted); margin-top: .3em; font-weight: 400; }
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+td { padding: 10px; border-bottom: 1px solid #edf0f4; vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+.table-wrap { overflow-x: auto; }

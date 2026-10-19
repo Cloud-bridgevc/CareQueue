@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CareQueue — Scheduling and coordination for home-care agencies</title>
+<meta name="description" content="CareQueue helps home-care agencies coordinate caregiver availability, visits, confirmations, handovers and supervisor follow-up.">
+<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div data-site-header></div>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Home-care operations</div>
+      <h1>Every visit covered. Every record confirmed. Nothing lost at handover.</h1>
+      <p class="lead">CareQueue watches your schedule and visit records around the clock, surfaces conflicts and missing confirmations before they become missed care, and gives supervisors one clear queue to work from.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/request-demo">Request a demo</a>
+        <a class="btn" href="/demo">Try the scheduling demo</a>
+      </div>
+      <p class="small muted" style="margin-top:16px">Built for agencies with 20 to 1,000 caregivers. Administrative coordination only — no clinical decision-making.</p>
+    </div>
+    <div class="preview" aria-label="Example supervisor attention queue (fictional)">
+      <div class="preview-inner">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <strong style="color:var(--navy)">Supervisor attention queue</strong><span class="pill teal">Live</span>
+        </div>
+        <div class="preview-row"><span class="pill sev-critical">Critical</span><span class="grow">No confirmation for visit with Client 1006</span><span class="muted tiny">35 min</span></div>
+        <div class="preview-row"><span class="pill sev-critical">Critical</span><span class="grow">Evening visit for Client 1004 has no caregiver</span><span class="muted tiny">in 6 h</span></div>
+        <div class="preview-row"><span class="pill sev-high">High</span><span class="grow">Caregiver assigned during approved leave</span><span class="muted tiny">Tue</span></div>
+        <div class="preview-row"><span class="pill sev-medium">Medium</span><span class="grow">15 min between Southbend and Eastfield visits</span><span class="muted tiny">Mon</span></div>
+        <div class="preview-row"><span class="pill sev-medium">Medium</span><span class="grow">Timesheet unsigned 24 h after check-out</span><span class="muted tiny">2 d</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band alt">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Five jobs CareQueue takes off your coordinators' plates</h2>
+      <p>Each one runs on rules you can read and configure. AI is used for drafting administrative summaries — and every draft is reviewed by a person before anyone else sees it.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card feature"><div class="icon">⇄</div><h3>Scheduling conflict detection</h3><p>Overlapping assignments, visits during time off or outside availability, missing credentials, uncovered visits and tight travel between zones — flagged with the rule that caught it.</p></div>
+      <div class="card feature"><div class="icon">✓</div><h3>Visit confirmation monitoring</h3><p>Missing check-ins and check-outs are flagged after a configurable grace period. Unsigned timesheets and open checklists are caught before billing.</p></div>
+      <div class="card feature"><div class="icon">≡</div><h3>Handover summaries</h3><p>Shift notes are organized into a concise administrative brief for the right staff. Care observations are excluded and routed to your clinical lead.</p></div>
+      <div class="card feature"><div class="icon">!</div><h3>Supervisor attention queue</h3><p>One prioritized list of overdue follow-ups, unresolved scheduling issues and incomplete records — with owners, due times and a full history.</p></div>
+      <div class="card feature"><div class="icon">▤</div><h3>Operations reporting</h3><p>Confirmation rates, coverage for the week ahead, issue trends and recurring problems by caregiver, client or zone.</p></div>
+      <div class="card feature"><div class="icon">⚑</div><h3>Incident escalation</h3><p>Report, triage, escalate and resolve operational incidents with required notes, follow-up timers and a complete timeline.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="section-head"><h2>How a missed confirmation reaches a supervisor</h2><p>A worked example from the demonstration agency.</p></div>
+    <div class="steps">
+      <div class="step"><h4>Visit ends</h4><p>A 2-hour companion visit is scheduled to end at 2:00 PM. No check-in or check-out arrives from the caregiver's app.</p></div>
+      <div class="step"><h4>Grace period passes</h4><p>At 2:30 PM the confirmation monitor sees the visit is still unconfirmed past the agency's 30-minute grace period.</p></div>
+      <div class="step"><h4>Queue item created</h4><p>A critical item enters the supervisor queue with the rule, the record it relied on and a 2-hour follow-up target.</p></div>
+      <div class="step"><h4>Supervisor resolves</h4><p>The supervisor calls the caregiver, records a manual confirmation with a reason, and closes the item with a note. Every step is audit-logged.</p></div>
+    </div>
+    <p style="margin-top:24px"><a class="btn btn-teal" href="/app/">Open the live dashboard demo</a></p>
+  </div>
+</section>
+
+<section class="band alt">
+  <div class="wrap grid-2">
+    <div>
+      <h2>Designed for privacy from the start</h2>
+      <p class="muted">Coordination tools touch sensitive information. CareQueue keeps it minimal and controlled.</p>
+      <ul class="muted">
+        <li>Role-based access: caregivers see only their own visits; restricted notes need an extra grant.</li>
+        <li>Clients are shown by ID and initials; addresses stay in your secure access record.</li>
+        <li>Hash-chained audit log of every change and every sensitive view.</li>
+        <li>Configurable retention per record type.</li>
+        <li>Sales tools never receive care information.</li>
+      </ul>
+      <a href="/security">Read about security →</a>
+    </div>
+    <div class="note-box">
+      <strong>What CareQueue does not do.</strong>
+      <p style="margin:.5em 0 0">CareQueue does not diagnose, recommend treatment, or assess patient safety. It flags administrative and scheduling gaps for your staff to act on. AI-drafted summaries are labelled as drafts and are hidden until an authorized supervisor approves them.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div data-site-footer></div>
+<script src="/site.js" type="module"></script>
+</body>
+</html>
