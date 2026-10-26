@@ -1,11 +1,18 @@
 // CareQueue HTTP server (zero dependencies). Serves the public website at /,
 // the operations dashboard at /app, and the JSON API at /api.
+//
+// Runs three ways:
+//   - `npm start`: long-lived local server
+//   - Vercel Function: api/index.js imports `handler` (see vercel.json)
+//   - Cloudflare Workers: worker.js imports this module, which listens on 4310 for httpServerHandler
+// Sessions are signed cookies, so sign-in survives serverless instance changes;
+// demo data lives in instance memory.
 
 import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { randomBytes } from 'node:crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { extname, join, normalize, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createStore, sweep } from './store.js';
 import { match, authorize } from './api.js';
 
@@ -14,14 +21,26 @@ const ROOT = import.meta.url ? join(dirname(fileURLToPath(import.meta.url)), '..
 const PORT = Number(process.env.PORT) || 4310;
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const SWEEP_INTERVAL_MS = 60 * 1000;
+const ON_WORKERS = globalThis.navigator?.userAgent === 'Cloudflare-Workers';
 
-// Created on first use: Workers forbids random values (used by the seed and audit log) at global scope.
+// Created on first use: Workers forbids random values (used by the seed, audit log and session secret) at global scope.
 let realStore;
 const getStore = () => (realStore ??= createStore());
 const store = new Proxy({}, {
   get: (_, key) => Reflect.get(getStore(), key),
   set: (_, key, value) => Reflect.set(getStore(), key, value),
 });
+
+// Set SESSION_SECRET in production. Without it, a per-instance random secret is
+// used, which signs users out when a serverless instance is replaced.
+let sessionSecret;
+const getSessionSecret = () => {
+  if (!sessionSecret) {
+    sessionSecret = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
+    if (!process.env.SESSION_SECRET) console.warn('SESSION_SECRET not set; using a temporary per-instance secret.');
+  }
+  return sessionSecret;
+};
 
 const STATIC = [
   ['/shared/', join(ROOT, 'shared')],
@@ -49,16 +68,41 @@ function cookies(req) {
   return Object.fromEntries((req.headers.cookie || '').split(';').map((c) => c.trim().split('=')).filter(([k]) => k).map(([k, ...v]) => [k, decodeURIComponent(v.join('='))]));
 }
 
+// Session token: base64url(userId.expiresAt).hmac
+function sign(value) {
+  return createHmac('sha256', getSessionSecret()).update(value).digest('base64url');
+}
+
+function issueSession(userId) {
+  const payload = Buffer.from(`${userId}.${Date.now() + SESSION_TTL_MS}`).toString('base64url');
+  return `${payload}.${sign(payload)}`;
+}
+
 function sessionUser(req) {
-  const sid = cookies(req).cq_session;
-  const sess = sid && store.sessions.get(sid);
-  if (!sess) return null;
-  if (Date.now() - sess.lastSeen > SESSION_TTL_MS) { store.sessions.delete(sid); return null; }
-  sess.lastSeen = Date.now();
-  return store.staff.find((u) => u.id === sess.userId) || null;
+  const token = cookies(req).cq_session;
+  if (!token) return null;
+  const [payload, mac] = token.split('.');
+  if (!payload || !mac) return null;
+  const expected = Buffer.from(sign(payload));
+  const given = Buffer.from(mac);
+  if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
+  const [userId, exp] = Buffer.from(payload, 'base64url').toString().split('.');
+  if (!(Number(exp) > Date.now())) return null;
+  return store.staff.find((u) => u.id === userId) || null;
+}
+
+function cookieAttrs(req, maxAgeSeconds) {
+  const secure = req.headers['x-forwarded-proto'] === 'https' ? '; Secure' : '';
+  return `HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}${secure}`;
+}
+
+function clientIp(req) {
+  return String(req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown';
 }
 
 async function readBody(req, limit = 64 * 1024) {
+  // Some hosts pre-parse the body; use it when present.
+  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) return req.body;
   let size = 0;
   const chunks = [];
   for await (const chunk of req) {
@@ -79,6 +123,12 @@ function rateLimited(key, max = 5, windowMs = 60_000) {
   return list.length > max;
 }
 
+// Run the monitors at most once a minute, driven by traffic (serverless hosts have no background timers).
+function sweepIfDue() {
+  const s = getStore();
+  if (!s.lastSweep || Date.now() - Date.parse(s.lastSweep.at) > SWEEP_INTERVAL_MS) sweep(s, Date.now());
+}
+
 async function handleApi(req, res, url) {
   const method = req.method;
   // CSRF: cookies are SameSite=Strict and all state-changing calls must be same-origin JSON with a custom header.
@@ -89,17 +139,13 @@ async function handleApi(req, res, url) {
     const body = await readBody(req);
     const user = store.staff.find((u) => u.id === body.userId);
     if (!user) return send(res, 400, { error: 'Unknown persona.' });
-    const sid = randomBytes(24).toString('base64url');
-    store.sessions.set(sid, { userId: user.id, lastSeen: Date.now() });
     store.audit.append({ actor: user, action: 'session.signed_in', entity: 'session', detail: { method: 'demo-persona' } });
-    return send(res, 200, { ok: true }, { 'Set-Cookie': `cq_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${SESSION_TTL_MS / 1000}` });
+    return send(res, 200, { ok: true }, { 'Set-Cookie': `cq_session=${issueSession(user.id)}; ${cookieAttrs(req, SESSION_TTL_MS / 1000)}` });
   }
   if (url.pathname === '/api/session' && method === 'DELETE') {
-    const sid = cookies(req).cq_session;
     const user = sessionUser(req);
-    if (sid) store.sessions.delete(sid);
     if (user) store.audit.append({ actor: user, action: 'session.signed_out', entity: 'session' });
-    return send(res, 200, { ok: true }, { 'Set-Cookie': 'cq_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0' });
+    return send(res, 200, { ok: true }, { 'Set-Cookie': `cq_session=; ${cookieAttrs(req, 0)}` });
   }
 
   const r = match(method, url.pathname);
@@ -111,8 +157,9 @@ async function handleApi(req, res, url) {
     if (user) store.audit.append({ actor: user, action: 'access.denied', entity: 'api', detail: { method, path: url.pathname }, outcome: 'denied' });
     return send(res, err.status, { error: err.message });
   }
-  if (r.permission === 'public' && method === 'POST' && rateLimited(req.socket.remoteAddress)) return send(res, 429, { error: 'Too many requests. Try again shortly.' });
+  if (r.permission === 'public' && method === 'POST' && rateLimited(clientIp(req))) return send(res, 429, { error: 'Too many requests. Try again shortly.' });
 
+  sweepIfDue();
   const body = method === 'GET' ? {} : await readBody(req);
   const ctx = {
     s: getStore(), user, params: r.params, query: url.searchParams, body, now: Date.now(),
@@ -145,12 +192,7 @@ async function serveStatic(req, res, url) {
   return send(res, 404, page404, { 'Content-Type': 'text/html; charset=utf-8' });
 }
 
-// On Cloudflare Workers, timers can't run at global scope, so sweep lazily on requests instead.
-const ON_WORKERS = globalThis.navigator?.userAgent === 'Cloudflare-Workers';
-let lastSweep = Date.now();
-
-const server = http.createServer(async (req, res) => {
-  if (ON_WORKERS && Date.now() - lastSweep > SWEEP_INTERVAL_MS) { lastSweep = Date.now(); sweep(getStore(), lastSweep); }
+export async function handler(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   try {
     if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
@@ -161,12 +203,15 @@ const server = http.createServer(async (req, res) => {
     if (status === 500) console.error(err);
     return send(res, status, { error: status === 500 ? 'Something went wrong.' : err.message });
   }
-});
+}
 
-// Background monitor (the Lambda sweep in AWS).
-if (!ON_WORKERS) setInterval(() => sweep(getStore(), Date.now()), SWEEP_INTERVAL_MS).unref();
-
-server.listen(PORT, () => {
-  console.log(`CareQueue running — website http://localhost:${PORT}/  ·  dashboard http://localhost:${PORT}/app/`);
-  console.log('All data is synthetic. Summaries use the local drafter unless CAREQUEUE_BEDROCK_REGION is set.');
-});
+// Listen when run directly (`npm start`) or on Cloudflare Workers (httpServerHandler connects to this port).
+// Vercel imports `handler` instead and must not listen.
+const RUN_DIRECTLY = !!(process.argv?.[1] && import.meta.url && import.meta.url === pathToFileURL(process.argv[1]).href);
+if (RUN_DIRECTLY || ON_WORKERS) {
+  if (!ON_WORKERS) setInterval(() => sweep(getStore(), Date.now()), SWEEP_INTERVAL_MS).unref();
+  http.createServer(handler).listen(PORT, () => {
+    console.log(`CareQueue running — website http://localhost:${PORT}/  ·  dashboard http://localhost:${PORT}/app/`);
+    console.log('All data is synthetic. Summaries use the local drafter unless CAREQUEUE_BEDROCK_REGION is set.');
+  });
+}

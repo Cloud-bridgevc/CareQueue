@@ -7,3 +7,5 @@ node_modules/
 cdk.out/
 dist/
 .wrangler/
+vercel-static/
+.vercel/
