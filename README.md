@@ -47,3 +47,15 @@ Sign in as **Priya Raman (Supervisor)** → *Missed-confirmation walkthrough* �
 ## Status
 
 Working demo build. Not production-ready: in-memory storage, demo persona sign-in, and the Lambda data-access layer and infrastructure-as-code are not written yet. See `docs/privacy-and-safety.md` → *Known gaps*.
+
+## Launch readiness (glow-up)
+
+- Home page: problem section with three sourced statistics, what-we-solve, comparison table, AI section, roadmap, team, FAQ and early access, with scroll-reveal motion that respects reduced motion (`public/assets/glow.css`, `glow.js`).
+- New pages: `/privacy`, `/terms` (review drafts). Footer credits the founders and links to them.
+- Ship assets in `public/site`: OG image, icons, favicon, manifest, sitemap, robots, founders JSON-LD. `server/index.js` now serves `.png`, `.webmanifest`, `.xml` and `.txt` with the right types.
+
+### Content to confirm before launch
+- **Founders are placeholders:** Adaeze Okonkwo (Founder/CEO) and Tobi Adeyemi (Co-founder/CTO). Replace in `public/site/index.html` (team section), `public/site/site.js` (footer) and the JSON-LD.
+- Contact email `hello@carequeue.site` is a placeholder — create the forward or replace it.
+- Statistics (Activated Insights via Home Health Care News; KFF 2024) — re-check figures and links.
+- Privacy notice and terms need operator details and governing law.
