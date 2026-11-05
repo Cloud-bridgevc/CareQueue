@@ -6,6 +6,5 @@ node_modules/
 .DS_Store
 cdk.out/
 dist/
-.wrangler/
 vercel-static/
 .vercel/

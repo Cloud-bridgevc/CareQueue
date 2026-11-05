@@ -1,10 +1,9 @@
 // CareQueue HTTP server (zero dependencies). Serves the public website at /,
 // the operations dashboard at /app, and the JSON API at /api.
 //
-// Runs three ways:
+// Runs two ways:
 //   - `npm start`: long-lived local server
 //   - Vercel Function: api/index.js imports `handler` (see vercel.json)
-//   - Cloudflare Workers: worker.js imports this module, which listens on 4310 for httpServerHandler
 // Sessions are signed cookies, so sign-in survives serverless instance changes;
 // demo data lives in instance memory.
 
@@ -16,14 +15,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createStore, sweep } from './store.js';
 import { match, authorize } from './api.js';
 
-// import.meta.url is undefined in the Workers bundle; static files are served by the assets binding there.
 const ROOT = import.meta.url ? join(dirname(fileURLToPath(import.meta.url)), '..') : '/';
 const PORT = Number(process.env.PORT) || 4310;
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const SWEEP_INTERVAL_MS = 60 * 1000;
-const ON_WORKERS = globalThis.navigator?.userAgent === 'Cloudflare-Workers';
 
-// Created on first use: Workers forbids random values (used by the seed, audit log and session secret) at global scope.
+// Created on first use (the seed, audit log and session secret use random values).
 let realStore;
 const getStore = () => (realStore ??= createStore());
 const store = new Proxy({}, {
@@ -205,11 +202,11 @@ export async function handler(req, res) {
   }
 }
 
-// Listen when run directly (`npm start`) or on Cloudflare Workers (httpServerHandler connects to this port).
+// Listen only when run directly (`npm start`).
 // Vercel imports `handler` instead and must not listen.
 const RUN_DIRECTLY = !!(process.argv?.[1] && import.meta.url && import.meta.url === pathToFileURL(process.argv[1]).href);
-if (RUN_DIRECTLY || ON_WORKERS) {
-  if (!ON_WORKERS) setInterval(() => sweep(getStore(), Date.now()), SWEEP_INTERVAL_MS).unref();
+if (RUN_DIRECTLY) {
+  setInterval(() => sweep(getStore(), Date.now()), SWEEP_INTERVAL_MS).unref();
   http.createServer(handler).listen(PORT, () => {
     console.log(`CareQueue running — website http://localhost:${PORT}/  ·  dashboard http://localhost:${PORT}/app/`);
     console.log('All data is synthetic. Summaries use the local drafter unless CAREQUEUE_BEDROCK_REGION is set.');

@@ -30,5 +30,5 @@ if (footer) {
   <footer class="site-footer"><div class="wrap">
     <div><a class="logo" href="/" style="color:#fff">${LOGO} CareQueue</a><p style="margin-top:10px;max-width:28em">Scheduling and coordination for home-care agencies. Administrative support only — CareQueue does not provide clinical advice or assessments.</p></div>
     <div class="links">${PAGES.map(([h, l]) => `<a href="${h}">${l}</a>`).join('')}<a href="/request-demo">Request a demo</a><a href="/#team">Team</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
-  </div><div class="wrap" style="margin-top:18px;font-size:13px;opacity:.8">Founded by Adaeze Okonkwo (Founder/CEO) &amp; Tobi Adeyemi (Co-founder/CTO) · © 2026 CareQueue</div></footer>`;
+  </div><div class="wrap" style="margin-top:18px;font-size:13px;opacity:.8">Founded by John Snow (Founder/CEO) &amp; Tobi Adeyemi (Co-founder/CTO) · © 2026 CareQueue</div></footer>`;
 }

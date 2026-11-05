@@ -55,7 +55,7 @@ Working demo build. Not production-ready: in-memory storage, demo persona sign-i
 - Ship assets in `public/site`: OG image, icons, favicon, manifest, sitemap, robots, founders JSON-LD. `server/index.js` now serves `.png`, `.webmanifest`, `.xml` and `.txt` with the right types.
 
 ### Content to confirm before launch
-- **Founders are placeholders:** Adaeze Okonkwo (Founder/CEO) and Tobi Adeyemi (Co-founder/CTO). Replace in `public/site/index.html` (team section), `public/site/site.js` (footer) and the JSON-LD.
+- **Founders:** John Snow (Founder/CEO, confirmed) and Tobi Adeyemi (Co-founder/CTO, still a placeholder). Edit in `public/site/index.html` (team section), `public/site/site.js` (footer) and the JSON-LD.
 - Contact email `hello@carequeue.site` is a placeholder — create the forward or replace it.
 - Statistics (Activated Insights via Home Health Care News; KFF 2024) — re-check figures and links.
 - Privacy notice and terms need operator details and governing law.
